@@ -1,0 +1,1 @@
+from .celtic import Celtic

@@ -62,59 +62,11 @@ class Celtic:
         if 'Please select variant' in self.vehicle_page_content.text:
             raise ValueError(bad_vrn_message)
 
-    def get_remap_data(self) -> dict:
-        """Parse remap data"""
-        map_data_divs = self.vehicle_page_content.find_all(
-            "div", class_="ctvc_gauge_text"
-        )
-
-        result_texts = []
-        for element in map_data_divs:
-            element_text = element.find("h5")
-            result_texts.append(element_text.text.strip())
-
-        remap_data = {}
-        remap_data.update(
-            {
-                "power_stock": f"{result_texts[0]} {CelticUnits.POWER.value}",
-                "power_mapped": f"{result_texts[1]} {CelticUnits.POWER.value}",
-                "power_diff": f"{result_texts[2]} {CelticUnits.POWER.value}",
-                "torque_stock": f"{result_texts[3]} {CelticUnits.TORQUE.value}",
-                "torque_mapped": f"{result_texts[4]} {CelticUnits.TORQUE.value}",
-                "torque_diff": f"{result_texts[5]} {CelticUnits.TORQUE.value}",
-            }
-        )
-
-        return remap_data
-
-    def get_vehicle_title(self) -> str:
-        """Parse vehicle title"""
-        vehicle_title_element = self.vehicle_page_content.find(id='ctvc-title')
-        return vehicle_title_element.text.strip().replace('\n', ' ').replace('  ', '') # type:ignore
-
-
-    def get_vehicle_detail(self) -> dict:
-        """Parse vehicle information table"""
-        vehicle_data = {}
-        vehicle_data_table = self.vehicle_page_content.find(
-            'ul', attrs={'class': 'ctvs_list'}
-        )
-
-        rows = vehicle_data_table.find_all('li')  # type: ignore
-        for row in rows:
-            row_text    = row.text.strip().replace('\n', ' ').replace('  ', '')
-            row_text    = row_text.split(':')
-            row_key     = row_text[0].replace(' ', '_').lower()
-            row_value   = row_text[1]
-            vehicle_data.update({row_key: row_value})
-
-        return vehicle_data
-
-    def get_all(self) -> dict:
+    def all(self) -> dict:
         """Return dict of all data points"""
-        remap_data      = self.get_remap_data()
-        vehicle_title   = self.get_vehicle_title()
-        vehicle_detail  = self.get_vehicle_detail()
+        remap_data      = self.remap_data()
+        vehicle_title   = self.vehicle_title()
+        vehicle_detail  = self.vehicle_detail()
 
         return {
             'remap_data':     remap_data,
@@ -123,11 +75,11 @@ class Celtic:
             'result_url':     self.result_url,
         }
 
-    def get_all_pretty(self) -> str:
+    def all_pretty(self) -> str:
         """Return all data as a multi-line string"""
-        remap_data    = self.get_remap_data()
-        vehicle_title = self.get_vehicle_title()
-        vehicle_detail  = self.get_vehicle_detail()
+        remap_data    = self.remap_data()
+        vehicle_title = self.vehicle_title()
+        vehicle_detail  = self.vehicle_detail()
 
         max_key_length = 0
         vehicle_detail_pretty = ''
@@ -156,3 +108,51 @@ class Celtic:
         )
 
         return pretty_info
+
+    def remap_data(self) -> dict:
+        """Return remap data"""
+        map_data_divs = self.vehicle_page_content.find_all(
+            "div", class_="ctvc_gauge_text"
+        )
+
+        result_texts = []
+        for element in map_data_divs:
+            element_text = element.find("h5")
+            result_texts.append(element_text.text.strip())
+
+        remap_data = {}
+        remap_data.update(
+            {
+                "power_stock": f"{result_texts[0]} {CelticUnits.POWER.value}",
+                "power_mapped": f"{result_texts[1]} {CelticUnits.POWER.value}",
+                "power_diff": f"{result_texts[2]} {CelticUnits.POWER.value}",
+                "torque_stock": f"{result_texts[3]} {CelticUnits.TORQUE.value}",
+                "torque_mapped": f"{result_texts[4]} {CelticUnits.TORQUE.value}",
+                "torque_diff": f"{result_texts[5]} {CelticUnits.TORQUE.value}",
+            }
+        )
+
+        return remap_data
+
+    def vehicle_title(self) -> str:
+        """Return vehicle title"""
+        vehicle_title_element = self.vehicle_page_content.find(id='ctvc-title')
+        return vehicle_title_element.text.strip().replace('\n', ' ').replace('  ', '') # type:ignore
+
+
+    def vehicle_detail(self) -> dict:
+        """Return vehicle information table"""
+        vehicle_data = {}
+        vehicle_data_table = self.vehicle_page_content.find(
+            'ul', attrs={'class': 'ctvs_list'}
+        )
+
+        rows = vehicle_data_table.find_all('li')  # type: ignore
+        for row in rows:
+            row_text    = row.text.strip().replace('\n', ' ').replace('  ', '')
+            row_text    = row_text.split(':')
+            row_key     = row_text[0].replace(' ', '_').lower()
+            row_value   = row_text[1]
+            vehicle_data.update({row_key: row_value})
+
+        return vehicle_data

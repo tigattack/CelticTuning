@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "CelticTuning"
+version = "1"
+dependencies = [
+  "bs4",
+  "flask",
+  "requests"
+]
+requires-python = ">=3.8"
+authors = [
+  {name = "tigattack"},
+]
+maintainers = [
+  {name = "tigattack"},
+]
+description = "Unofficial Celtic Tuning API"
+readme = "README.md"
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python"
+]

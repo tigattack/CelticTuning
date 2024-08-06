@@ -1,4 +1,3 @@
 {
-  "python.linting.pylintEnabled": true,
   "python.defaultInterpreterPath": "./venv/bin/python"
 }

@@ -50,7 +50,7 @@ class Celtic:
             allow_redirects=False,
             timeout=5
         )
-        redirect_path = search_response.headers['Location']
+        redirect_path = search_response.headers['Location'].replace(base_url, '')
 
         if redirect_path == '/component/ctvc/#t3-content':
             raise ValueError(bad_vrn_message)

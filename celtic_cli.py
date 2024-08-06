@@ -1,5 +1,7 @@
 """Query Celtic Tuning from your terminal"""
+
 import sys
+
 from Celtic import Celtic
 
 # Usage notes:

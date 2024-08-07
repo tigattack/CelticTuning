@@ -53,14 +53,14 @@ class Celtic:
         self.is_bad_vrn = False
 
         # Normalise and validate power unit
-        power_unit_normalised = self._normalise_unit(power_unit, PowerUnits)
+        power_unit_normalised = self.normalise_unit(power_unit, PowerUnits)
         if power_unit_normalised not in PowerUnits._value2member_map_:
             raise ValueError(
                 f"Invalid power unit: {power_unit}. Must be one of {[unit.value for unit in PowerUnits]}"
             )
 
         # Normalise and validate torque unit
-        torque_unit_normalised = self._normalise_unit(torque_unit, TorqueUnits)
+        torque_unit_normalised = self.normalise_unit(torque_unit, TorqueUnits)
         if torque_unit_normalised not in TorqueUnits._value2member_map_:
             raise ValueError(
                 f"Invalid torque unit: {torque_unit}. Must be one of {[unit.value for unit in TorqueUnits]}"
@@ -213,7 +213,7 @@ class Celtic:
         return vehicle_data
 
     @staticmethod
-    def _normalise_unit(unit: str, enum_class: Enum) -> str:
+    def normalise_unit(unit: str, enum_class: Enum) -> str:
         """Normalise the unit string to match enum values case-insensitively."""
         unit = unit.lower()
         for enum_member in enum_class:

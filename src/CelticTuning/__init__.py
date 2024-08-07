@@ -5,6 +5,8 @@ from enum import Enum
 import requests
 from bs4 import BeautifulSoup
 
+from CelticTuning import utils
+
 # Usage notes:
 # Only supports returning data for a "stage 1" map.
 # For vehicles with supported "stage 2" maps, "economy" maps, etc., only the stage 1 result
@@ -27,12 +29,45 @@ class CelticUnits(Enum):
     TORQUE = "lb/ft"
 
 
+class PowerUnits(Enum):
+    BHP = "BHP"
+    KW = "kW"
+    PS = "PS"
+
+
+class TorqueUnits(Enum):
+    NM = "Nm"
+    LB_FT = "lb/ft"
+
+
 class Celtic:
     """Get vehicle information and remap estimates from Celtic Tuning."""
 
-    def __init__(self, vrn: str):
+    def __init__(
+        self,
+        vrn: str,
+        power_unit: str = "BHP",
+        torque_unit: str = "lb/ft",
+    ) -> None:
         self.vrn = vrn
         self.is_bad_vrn = False
+
+        # Normalise and validate power unit
+        power_unit_normalized = self._normalise_unit(power_unit, PowerUnits)
+        if power_unit_normalized not in PowerUnits._value2member_map_:
+            raise ValueError(
+                f"Invalid power unit: {power_unit}. Must be one of {[unit.value for unit in PowerUnits]}"
+            )
+
+        # Normalise and validate torque unit
+        torque_unit_normalized = self._normalise_unit(torque_unit, TorqueUnits)
+        if torque_unit_normalized not in TorqueUnits._value2member_map_:
+            raise ValueError(
+                f"Invalid torque unit: {torque_unit}. Must be one of {[unit.value for unit in TorqueUnits]}"
+            )
+
+        self.power_unit = power_unit_normalized
+        self.torque_unit = torque_unit_normalized
 
         bad_vrn_message = (
             f'Error: A vehicle with registration "{self.vrn.upper()}" could not be found.\n\n'
@@ -122,15 +157,34 @@ class Celtic:
             element_text = element.find("h5")
             result_texts.append(element_text.text.strip())
 
+        power_stock = utils.convert_power_unit(
+            result_texts[0], CelticUnits.POWER.value, self.power_unit
+        )
+        power_mapped = utils.convert_power_unit(
+            result_texts[1], CelticUnits.POWER.value, self.power_unit
+        )
+        power_diff = utils.convert_power_unit(
+            result_texts[2], CelticUnits.POWER.value, self.power_unit
+        )
+        torque_stock = utils.convert_torque_unit(
+            result_texts[3], CelticUnits.TORQUE.value, self.torque_unit
+        )
+        torque_mapped = utils.convert_torque_unit(
+            result_texts[4], CelticUnits.TORQUE.value, self.torque_unit
+        )
+        torque_diff = utils.convert_torque_unit(
+            result_texts[5], CelticUnits.TORQUE.value, self.torque_unit
+        )
+
         remap_data = {}
         remap_data.update(
             {
-                "power_stock": f"{result_texts[0]} {CelticUnits.POWER.value}",
-                "power_mapped": f"{result_texts[1]} {CelticUnits.POWER.value}",
-                "power_diff": f"{result_texts[2]} {CelticUnits.POWER.value}",
-                "torque_stock": f"{result_texts[3]} {CelticUnits.TORQUE.value}",
-                "torque_mapped": f"{result_texts[4]} {CelticUnits.TORQUE.value}",
-                "torque_diff": f"{result_texts[5]} {CelticUnits.TORQUE.value}",
+                "power_stock": f"{power_stock} {self.power_unit}",
+                "power_mapped": f"{power_mapped} {self.power_unit}",
+                "power_diff": f"{power_diff} {self.power_unit}",
+                "torque_stock": f"{torque_stock} {self.torque_unit}",
+                "torque_mapped": f"{torque_mapped} {self.torque_unit}",
+                "torque_diff": f"{torque_diff} {self.torque_unit}",
             }
         )
 
@@ -157,3 +211,12 @@ class Celtic:
             vehicle_data.update({row_key: row_value})
 
         return vehicle_data
+
+    @staticmethod
+    def _normalise_unit(unit: str, enum_class: Enum) -> str:
+        """Normalize the unit string to match enum values case-insensitively."""
+        unit = unit.lower()
+        for enum_member in enum_class:
+            if unit == enum_member.value.lower():
+                return enum_member.value
+        return unit

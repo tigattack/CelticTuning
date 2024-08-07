@@ -22,8 +22,10 @@ from bs4 import BeautifulSoup
 
 class CelticUnits(Enum):
     """Enums to be consumed by Celtic class"""
-    POWER   = 'BHP'
-    TORQUE  = 'lb/ft'
+
+    POWER = "BHP"
+    TORQUE = "lb/ft"
+
 
 class Celtic:
     """Get vehicle information and remap estimates from Celtic Tuning."""
@@ -41,16 +43,16 @@ class Celtic:
             "information provided by the DVLA."
         )
 
-        base_url    = 'https://www.celtictuning.co.uk'
-        search_path = '/component/ctvc/search?dvla='
+        base_url = "https://www.celtictuning.co.uk"
+        search_path = "/component/ctvc/search?dvla="
 
         # Search for a VRN and return the vehicle info page URL
         search_url = base_url + search_path + vrn
 
         search_response = requests.get(search_url, allow_redirects=False, timeout=5)
-        redirect_path = search_response.headers['Location'].replace(base_url, '')
+        redirect_path = search_response.headers["Location"].replace(base_url, "")
 
-        if redirect_path == '/component/ctvc/#t3-content':
+        if redirect_path == "/component/ctvc/#t3-content":
             raise ValueError(bad_vrn_message)
 
         self.result_url = base_url + redirect_path
@@ -59,39 +61,39 @@ class Celtic:
         data_response = requests.get(self.result_url, timeout=5)
         self.vehicle_page_content = BeautifulSoup(data_response.content, "html.parser")
 
-        if 'Please select variant' in self.vehicle_page_content.text:
+        if "Please select variant" in self.vehicle_page_content.text:
             raise ValueError(bad_vrn_message)
 
     def all(self) -> dict:
         """Return dict of all data points"""
-        remap_data      = self.remap_data()
-        vehicle_title   = self.vehicle_title()
-        vehicle_detail  = self.vehicle_detail()
+        remap_data = self.remap_data()
+        vehicle_title = self.vehicle_title()
+        vehicle_detail = self.vehicle_detail()
 
         return {
-            'remap_data':     remap_data,
-            'vehicle_title':  vehicle_title,
-            'vehicle_detail': vehicle_detail,
-            'result_url':     self.result_url,
+            "remap_data": remap_data,
+            "vehicle_title": vehicle_title,
+            "vehicle_detail": vehicle_detail,
+            "result_url": self.result_url,
         }
 
     def all_pretty(self) -> str:
         """Return all data as a multi-line string"""
-        remap_data    = self.remap_data()
+        remap_data = self.remap_data()
         vehicle_title = self.vehicle_title()
-        vehicle_detail  = self.vehicle_detail()
+        vehicle_detail = self.vehicle_detail()
 
         max_key_length = 0
-        vehicle_detail_pretty = ''
+        vehicle_detail_pretty = ""
         for key in vehicle_detail:
             if len(key) > max_key_length:
                 max_key_length = len(key)
 
         for key, value in vehicle_detail.items():
-            key_pretty = key.replace('_', ' ').title()
+            key_pretty = key.replace("_", " ").title()
             spaces = max_key_length - len(key_pretty)
             vehicle_detail_pretty += f'{key_pretty}: {" " * spaces}{value}\n'
-        vehicle_detail_pretty = vehicle_detail_pretty.rstrip('\n')
+        vehicle_detail_pretty = vehicle_detail_pretty.rstrip("\n")
 
         pretty_info = (
             f"Found vehicle: {vehicle_title}\n\n"
@@ -136,23 +138,22 @@ class Celtic:
 
     def vehicle_title(self) -> str:
         """Return vehicle title"""
-        vehicle_title_element = self.vehicle_page_content.find(id='ctvc-title')
-        return vehicle_title_element.text.strip().replace('\n', ' ').replace('  ', '') # type:ignore
-
+        vehicle_title_element = self.vehicle_page_content.find(id="ctvc-title")
+        return vehicle_title_element.text.strip().replace("\n", " ").replace("  ", "")  # type:ignore
 
     def vehicle_detail(self) -> dict:
         """Return vehicle information table"""
         vehicle_data = {}
         vehicle_data_table = self.vehicle_page_content.find(
-            'ul', attrs={'class': 'ctvs_list'}
+            "ul", attrs={"class": "ctvs_list"}
         )
 
-        rows = vehicle_data_table.find_all('li')  # type: ignore
+        rows = vehicle_data_table.find_all("li")  # type: ignore
         for row in rows:
-            row_text    = row.text.strip().replace('\n', ' ').replace('  ', '')
-            row_text    = row_text.split(':')
-            row_key     = row_text[0].replace(' ', '_').lower()
-            row_value   = row_text[1]
+            row_text = row.text.strip().replace("\n", " ").replace("  ", "")
+            row_text = row_text.split(":")
+            row_key = row_text[0].replace(" ", "_").lower()
+            row_value = row_text[1]
             vehicle_data.update({row_key: row_value})
 
         return vehicle_data

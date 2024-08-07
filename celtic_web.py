@@ -4,7 +4,7 @@ import os
 from flask import Flask, render_template, request
 from flask.wrappers import Response
 
-from Celtic import Celtic
+from src.CelticTuning import Celtic
 
 template_dir = os.path.abspath('./web_templates')
 app = Flask(__name__, template_folder=template_dir)

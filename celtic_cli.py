@@ -2,7 +2,7 @@
 
 import sys
 
-from Celtic import Celtic
+from src.CelticTuning import Celtic
 
 # Usage notes:
 # python3 celtic.py AB12CDE

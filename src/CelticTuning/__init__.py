@@ -53,21 +53,21 @@ class Celtic:
         self.is_bad_vrn = False
 
         # Normalise and validate power unit
-        power_unit_normalized = self._normalise_unit(power_unit, PowerUnits)
-        if power_unit_normalized not in PowerUnits._value2member_map_:
+        power_unit_normalised = self._normalise_unit(power_unit, PowerUnits)
+        if power_unit_normalised not in PowerUnits._value2member_map_:
             raise ValueError(
                 f"Invalid power unit: {power_unit}. Must be one of {[unit.value for unit in PowerUnits]}"
             )
 
         # Normalise and validate torque unit
-        torque_unit_normalized = self._normalise_unit(torque_unit, TorqueUnits)
-        if torque_unit_normalized not in TorqueUnits._value2member_map_:
+        torque_unit_normalised = self._normalise_unit(torque_unit, TorqueUnits)
+        if torque_unit_normalised not in TorqueUnits._value2member_map_:
             raise ValueError(
                 f"Invalid torque unit: {torque_unit}. Must be one of {[unit.value for unit in TorqueUnits]}"
             )
 
-        self.power_unit = power_unit_normalized
-        self.torque_unit = torque_unit_normalized
+        self.power_unit = power_unit_normalised
+        self.torque_unit = torque_unit_normalised
 
         bad_vrn_message = (
             f'Error: A vehicle with registration "{self.vrn.upper()}" could not be found.\n\n'
@@ -214,7 +214,7 @@ class Celtic:
 
     @staticmethod
     def _normalise_unit(unit: str, enum_class: Enum) -> str:
-        """Normalize the unit string to match enum values case-insensitively."""
+        """Normalise the unit string to match enum values case-insensitively."""
         unit = unit.lower()
         for enum_member in enum_class:
             if unit == enum_member.value.lower():

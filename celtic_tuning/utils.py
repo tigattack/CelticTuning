@@ -1,6 +1,6 @@
 """Utils for celtic_tuning"""
 
-from typing import LiteralString, Union
+from typing import LiteralString
 
 from .enums import PowerUnits, TorqueUnits
 
@@ -35,7 +35,7 @@ def convert_torque_unit(value: int | float, from_unit: str, to_unit: str) -> int
 
 
 def resolve_unit_case(
-    unit: str, enum_class: type[Union[PowerUnits, TorqueUnits]]
+    unit: str, enum_class: type[PowerUnits | TorqueUnits]
 ) -> LiteralString:
     """Returns the given power or torque unit string with correct case if found in `enum_class`."""
     unit = unit.lower()

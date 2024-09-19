@@ -1,6 +1,5 @@
 """Data models for celtic_tuning"""
 
-from typing import Union
 
 from bs4 import BeautifulSoup
 from pydantic import BaseModel, Field, field_validator
@@ -21,14 +20,14 @@ class PowerDetail(BaseModel):
 
     @field_validator("power_unit", mode="before")
     @classmethod
-    def validate_power_unit(cls, value: Union[str, PowerUnits]) -> str:
+    def validate_power_unit(cls, value: str | PowerUnits) -> str:
         if isinstance(value, str):
             value = PowerUnits(value)
         return value.value
 
     @field_validator("torque_unit", mode="before")
     @classmethod
-    def validate_torque_unit(cls, value: Union[str, TorqueUnits]) -> str:
+    def validate_torque_unit(cls, value: str | TorqueUnits) -> str:
         if isinstance(value, str):
             value = TorqueUnits(value)
         return value.value

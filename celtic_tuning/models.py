@@ -9,14 +9,14 @@ from .enums import PowerUnits, TorqueUnits
 
 class PowerDetail(BaseModel):
     power_stock: int
-    power_mapped: int
+    power_tuned: int
     power_diff: int
     torque_stock: int
-    torque_mapped: int
+    torque_tuned: int
     torque_diff: int
     power_unit: str
     torque_unit: str
-    remap_chart_url: str
+    dyno_chart_url: str
 
     @field_validator("power_unit", mode="before")
     @classmethod
@@ -80,13 +80,13 @@ class CelticData(BaseModel):
             + f"{vehicle_detail_pretty}\n\n"
             + "== REMAP DATA ==\n"
             + f"Stock power:  {self.power_detail.power_stock}\n"
-            + f"Mapped power: {self.power_detail.power_mapped}\n\n"
+            + f"Tuned power: {self.power_detail.power_tuned}\n\n"
             + f"Stock torque:  {self.power_detail.torque_stock}\n"
-            + f"Mapped torque: {self.power_detail.torque_mapped}\n\n"
+            + f"Tuned torque: {self.power_detail.torque_tuned}\n\n"
             + f"Power increase:  {self.power_detail.power_diff}\n"
             + f"Torque increase: {self.power_detail.torque_diff}\n\n"
             + f"Result URL: {self.result_url}\n"
-            + f"Chart URL: {self.power_detail.remap_chart_url}"
+            + f"Chart URL: {self.power_detail.dyno_chart_url}"
         )
 
 

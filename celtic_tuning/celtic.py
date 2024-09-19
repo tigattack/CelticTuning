@@ -100,7 +100,7 @@ class Celtic:
         power_stock = utils.convert_power_unit(
             result_texts[0], CelticDefaultUnits.POWER.value, self.power_unit
         )
-        power_mapped = utils.convert_power_unit(
+        power_tuned = utils.convert_power_unit(
             result_texts[1], CelticDefaultUnits.POWER.value, self.power_unit
         )
         power_diff = utils.convert_power_unit(
@@ -109,25 +109,25 @@ class Celtic:
         torque_stock = utils.convert_torque_unit(
             result_texts[3], CelticDefaultUnits.TORQUE.value, self.torque_unit
         )
-        torque_mapped = utils.convert_torque_unit(
+        torque_tuned = utils.convert_torque_unit(
             result_texts[4], CelticDefaultUnits.TORQUE.value, self.torque_unit
         )
         torque_diff = utils.convert_torque_unit(
             result_texts[5], CelticDefaultUnits.TORQUE.value, self.torque_unit
         )
 
-        chart_url = self.get_vehicle_remap_chart_url(self.vehicle_page_content)
+        dyno_chart_url = self.get_vehicle_dyno_chart_url(self.vehicle_page_content)
 
         return PowerDetail(
             power_stock=power_stock,
-            power_mapped=power_mapped,
+            power_tuned=power_tuned,
             power_diff=power_diff,
             torque_stock=torque_stock,
-            torque_mapped=torque_mapped,
+            torque_tuned=torque_tuned,
             torque_diff=torque_diff,
             power_unit=self.power_unit,
             torque_unit=self.torque_unit,
-            remap_chart_url=chart_url,
+            dyno_chart_url=dyno_chart_url,
         )
 
     def get_vehicle_title(self) -> str:
@@ -160,7 +160,7 @@ class Celtic:
             return VehicleDetail(**vehicle_data)
         raise ValueError("Vehicle data table is unexpected format")
 
-    def get_vehicle_remap_chart_url(self, vehicle_page: BeautifulSoup) -> str:
+    def get_vehicle_dyno_chart_url(self, vehicle_page: BeautifulSoup) -> str:
         """Return vehicle remap chart URL"""
         chart_btn = vehicle_page.find("a", class_="ctvc_chart_btn")
         if isinstance(chart_btn, Tag):

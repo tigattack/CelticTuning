@@ -1,25 +1,35 @@
-[build-system]
-requires = ["setuptools >= 61.0"]
-build-backend = "setuptools.build_meta"
-
 [project]
-name = "CelticTuning"
-version = "1"
-dependencies = [
-  "bs4",
-  "flask",
-  "requests"
-]
-requires-python = ">=3.8"
-authors = [
-  {name = "tigattack"},
-]
-maintainers = [
-  {name = "tigattack"},
-]
+requires-python = ">=3.9"
+
+[tool.poetry]
+name = "celtic_tuning"
+version = "1.0.0"
 description = "Unofficial Celtic Tuning API"
+authors = ["tigattack <10629864+tigattack@users.noreply.github.com>"]
 readme = "README.md"
-classifiers = [
-  "Development Status :: 4 - Beta",
-  "Programming Language :: Python"
+packages = [
+    {include = "celtic_tuning"}
 ]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+bs4 = "^0.0.2"
+flask = "^3.0.3"
+requests = "^2.32.3"
+pydantic = "^2.9.2"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.6.5"
+pyright = "^1.1.381"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+strict = true
+disable_error_code = "import-untyped"
+
+[tool.ruff.lint]
+extend-select = ["UP", "PLR"]
+ignore = ["PLR2004"]

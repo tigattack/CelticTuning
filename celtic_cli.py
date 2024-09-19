@@ -7,7 +7,11 @@ from celtic_tuning import Celtic
 # Usage notes:
 # python3 celtic.py AB12CDE
 
-celtic = Celtic(sys.argv[1])
+try:
+    celtic = Celtic(sys.argv[1])
+except ValueError as e:
+    print(e)
+    sys.exit(1)
 
 ret_type = sys.argv[2] if len(sys.argv) > 2 else "pretty"
 

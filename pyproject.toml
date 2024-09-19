@@ -3,7 +3,7 @@ requires-python = ">=3.9"
 
 [tool.poetry]
 name = "celtic_tuning"
-version = "1.0.0"
+version = "1.1.0"
 description = "Unofficial Celtic Tuning API"
 authors = ["tigattack <10629864+tigattack@users.noreply.github.com>"]
 readme = "README.md"

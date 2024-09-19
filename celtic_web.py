@@ -4,7 +4,7 @@ import os
 from flask import Flask, render_template, request
 from flask.wrappers import Response
 
-from src.CelticTuning import Celtic
+from celtic_tuning import Celtic
 
 template_dir = os.path.abspath('./web_templates')
 app = Flask(__name__, template_folder=template_dir)
@@ -23,7 +23,7 @@ def vehicle_info(vrn: str):
     except ValueError as err:
         return respond_error(str(err))
 
-    return celtic.get_all()
+    return celtic.get_all().model_dump()
 
 @app.route('/')
 def index():

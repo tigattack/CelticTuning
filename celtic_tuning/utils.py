@@ -1,42 +1,47 @@
-from typing import Literal
+"""Utils for celtic_tuning"""
 
-def bhp_to_kw(bhp: int) -> int:
-    """Convert BHP to kW"""
-    return round(bhp * 0.745699872)
+from typing import LiteralString, Union
 
-def bhp_to_ps(bhp: int) -> int:
-    """Convert BHP to PS"""
-    return round(bhp * 1.01387)
+from .enums import PowerUnits, TorqueUnits
 
-def lb_ft_to_nm(lb_ft: int) -> int:
-    """Convert lb/ft to Nm"""
-    return round(lb_ft * 1.3558179483)
 
-def convert_power_unit(
-    value: int | float, from_unit: Literal["kW", "BHP", "PS"], to_unit: Literal["kW", "BHP", "PS"]
-) -> int:
+def convert_power_unit(value: int | float, from_unit: str, to_unit: str) -> int:
     """Convert power units"""
     unit = to_unit.lower()
 
     if from_unit == to_unit:
-        return(int(value))
+        return int(value)
 
     if unit == "kw":
-        return bhp_to_kw(int(value))
+        return PowerUnits.bhp_to_kw(int(value))
 
     if unit == "ps":
-        return bhp_to_ps(int(value))
+        return PowerUnits.bhp_to_ps(int(value))
 
     raise ValueError(f"Cannot convert {from_unit} to {to_unit}")
 
-def convert_torque_unit(value: int | float, from_unit: Literal["Nm", "lb/ft"], to_unit: Literal["Nm", "lb/ft"]) -> int:
+
+def convert_torque_unit(value: int | float, from_unit: str, to_unit: str) -> int:
     """Convert torque units"""
     unit = to_unit.lower()
 
     if from_unit == to_unit:
-        return(int(value))
+        return int(value)
 
     if unit == "nm":
-        return lb_ft_to_nm(int(value))
+        return TorqueUnits.lbft_to_nm(int(value))
 
     raise ValueError(f"Cannot convert {from_unit} to {to_unit}")
+
+
+def resolve_unit_case(
+    unit: str, enum_class: type[Union[PowerUnits, TorqueUnits]]
+) -> LiteralString:
+    """Returns the given power or torque unit string with correct case if found in `enum_class`."""
+    unit = unit.lower()
+    for enum_member in enum_class:
+        if unit == enum_member.value.lower():
+            return enum_member.value
+    raise ValueError(
+        f"Invalid unit for {enum_class.__name__}: {unit}. Must be one of {', '.join([unit.value for unit in enum_class])}"
+    )

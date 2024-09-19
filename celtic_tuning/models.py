@@ -1,6 +1,5 @@
 """Data models for celtic_tuning"""
 
-
 from bs4 import BeautifulSoup
 from pydantic import BaseModel, Field, field_validator
 

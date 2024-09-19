@@ -34,9 +34,7 @@ def convert_torque_unit(value: int | float, from_unit: str, to_unit: str) -> int
     raise ValueError(f"Cannot convert {from_unit} to {to_unit}")
 
 
-def resolve_unit_case(
-    unit: str, enum_class: type[PowerUnits | TorqueUnits]
-) -> LiteralString:
+def resolve_unit_case(unit: str, enum_class: type[PowerUnits | TorqueUnits]) -> LiteralString:
     """Returns the given power or torque unit string with correct case if found in `enum_class`."""
     unit = unit.lower()
     for enum_member in enum_class:

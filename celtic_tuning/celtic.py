@@ -30,16 +30,12 @@ class Celtic:
         # Normalise and validate power unit
         power_unit_normalised = utils.resolve_unit_case(power_unit, PowerUnits)
         if power_unit_normalised not in PowerUnits._value2member_map_:
-            raise ValueError(
-                f"Invalid power unit: {power_unit}. Must be one of {[unit.value for unit in PowerUnits]}"
-            )
+            raise ValueError(f"Invalid power unit: {power_unit}. Must be one of {[unit.value for unit in PowerUnits]}")
 
         # Normalise and validate torque unit
         torque_unit_normalised = utils.resolve_unit_case(torque_unit, TorqueUnits)
         if torque_unit_normalised not in TorqueUnits._value2member_map_:
-            raise ValueError(
-                f"Invalid torque unit: {torque_unit}. Must be one of {[unit.value for unit in TorqueUnits]}"
-            )
+            raise ValueError(f"Invalid torque unit: {torque_unit}. Must be one of {[unit.value for unit in TorqueUnits]}")
 
         self.power_unit = power_unit_normalised
         self.torque_unit = torque_unit_normalised
@@ -88,33 +84,19 @@ class Celtic:
 
     def get_power_detail(self) -> PowerDetail:
         """Return remap data"""
-        map_data_divs = self.vehicle_page_content.find_all(
-            "div", class_="ctvc_gauge_text"
-        )
+        map_data_divs = self.vehicle_page_content.find_all("div", class_="ctvc_gauge_text")
 
         result_texts = []
         for element in map_data_divs:
             element_text = element.find("h5")
             result_texts.append(element_text.text.strip())
 
-        power_stock = utils.convert_power_unit(
-            result_texts[0], CelticDefaultUnits.POWER.value, self.power_unit
-        )
-        power_tuned = utils.convert_power_unit(
-            result_texts[1], CelticDefaultUnits.POWER.value, self.power_unit
-        )
-        power_diff = utils.convert_power_unit(
-            result_texts[2], CelticDefaultUnits.POWER.value, self.power_unit
-        )
-        torque_stock = utils.convert_torque_unit(
-            result_texts[3], CelticDefaultUnits.TORQUE.value, self.torque_unit
-        )
-        torque_tuned = utils.convert_torque_unit(
-            result_texts[4], CelticDefaultUnits.TORQUE.value, self.torque_unit
-        )
-        torque_diff = utils.convert_torque_unit(
-            result_texts[5], CelticDefaultUnits.TORQUE.value, self.torque_unit
-        )
+        power_stock = utils.convert_power_unit(result_texts[0], CelticDefaultUnits.POWER.value, self.power_unit)
+        power_tuned = utils.convert_power_unit(result_texts[1], CelticDefaultUnits.POWER.value, self.power_unit)
+        power_diff = utils.convert_power_unit(result_texts[2], CelticDefaultUnits.POWER.value, self.power_unit)
+        torque_stock = utils.convert_torque_unit(result_texts[3], CelticDefaultUnits.TORQUE.value, self.torque_unit)
+        torque_tuned = utils.convert_torque_unit(result_texts[4], CelticDefaultUnits.TORQUE.value, self.torque_unit)
+        torque_diff = utils.convert_torque_unit(result_texts[5], CelticDefaultUnits.TORQUE.value, self.torque_unit)
 
         dyno_chart_url = self.get_vehicle_dyno_chart_url(self.vehicle_page_content)
 
@@ -138,9 +120,7 @@ class Celtic:
     def get_vehicle_detail(self) -> VehicleDetail:
         """Return vehicle information table"""
         vehicle_data = {}
-        vehicle_data_table = self.vehicle_page_content.find(
-            "ul", attrs={"class": "ctvs_list"}
-        )
+        vehicle_data_table = self.vehicle_page_content.find("ul", attrs={"class": "ctvs_list"})
 
         if isinstance(vehicle_data_table, Tag):
             rows = vehicle_data_table.find_all("li")

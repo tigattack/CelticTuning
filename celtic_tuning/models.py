@@ -33,6 +33,14 @@ class PowerDetail(BaseModel):
             value = TorqueUnits(value)
         return value.value
 
+    @property
+    def power_diff_pct(self) -> int:
+        return round((self.power_diff / self.power_stock) * 100)
+
+    @property
+    def torque_diff_pct(self) -> int:
+        return round((self.torque_diff / self.torque_stock) * 100)
+
 
 class VehicleDetail(BaseModel):
     ecu_type: str

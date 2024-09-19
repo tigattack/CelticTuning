@@ -49,8 +49,8 @@ class Celtic:
     def _scrape_vehicle_page(self, vrn: str) -> tuple[str, BeautifulSoup]:
         """Scrape vehicle info page for given VRN. Returns result URL and BeautifulSoup object for full page content."""
         bad_vrn_message = (
-            f"A vehicle with registration '{vrn.upper()}' could not be found. "
-            + "Either Celtic Tuning does not offer a tune for this vehicle, or the registration is incorrect."
+            f"Unable to locate data for '{vrn.upper()}'. Either Celtic Tuning does "
+            + "not offer a tune for this vehicle, or the registration is incorrect."
         )
 
         # Search for a VRN and return the vehicle info page URL
@@ -68,7 +68,7 @@ class Celtic:
         data_response = requests.get(result_url, timeout=5)
         page_content = BeautifulSoup(data_response.content, "html.parser")
 
-        if "Please select variant" in page_content.text:
+        if "Please select variant" in page_content.text or page_content.find(class_="alert alert-error"):
             raise ValueError(bad_vrn_message)
 
         return result_url, page_content

@@ -50,7 +50,7 @@ class VehicleDetail(BaseModel):
     year: int
 
     @property
-    def displacement_formatted(self) -> str:
+    def displacement_with_unit(self) -> str:
         return " ".join([str(self.displacement), self.displacement_unit])
 
 

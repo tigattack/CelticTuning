@@ -140,10 +140,10 @@ class Celtic:
             return VehicleDetail(**vehicle_data)
         raise ValueError("Vehicle data table is unexpected format")
 
-    def get_vehicle_dyno_chart_url(self, vehicle_page: BeautifulSoup) -> str:
+    def get_vehicle_dyno_chart_url(self, vehicle_page: BeautifulSoup) -> str | None:
         """Return vehicle remap chart URL"""
-        chart_btn = vehicle_page.find("a", class_="ctvc_chart_btn")
-        if isinstance(chart_btn, Tag):
+        chart_btn = vehicle_page.select_one("a.ctvc_chart_btn")
+        if chart_btn:
             chart_url = chart_btn["href"]
             return str(chart_url)
-        raise ValueError("Vehicle remap chart element is unexpected format")
+        return None

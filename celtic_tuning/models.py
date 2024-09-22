@@ -15,7 +15,7 @@ class PowerDetail(BaseModel):
     torque_diff: int
     power_unit: str
     torque_unit: str
-    dyno_chart_url: str
+    dyno_chart_url: str | None
 
     @field_validator("power_unit", mode="before")
     @classmethod
